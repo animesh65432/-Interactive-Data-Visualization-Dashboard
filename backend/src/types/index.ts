@@ -15,3 +15,8 @@ export interface ErrorResponseTypes {
     data: any;
 }
 
+
+export type RetrivethedatabyspefictimeTypes = {
+    startDate: string
+    endDate: string
+}
