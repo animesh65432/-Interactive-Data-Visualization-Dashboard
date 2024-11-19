@@ -1,9 +1,9 @@
 import { CreateUser } from "./User"
-import { RetrieveDataByTimeRange } from "./Datavislation"
+import { RetrieveFilteredData } from "./Datavislation"
 
 const Controllers = {
     UserControllers: { CreateUser },
-    datavislation: { RetrieveDataByTimeRange }
+    datavislation: { RetrieveFilteredData }
 }
 
 export default Controllers

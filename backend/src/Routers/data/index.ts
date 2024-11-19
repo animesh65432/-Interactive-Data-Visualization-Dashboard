@@ -1,10 +1,10 @@
 import { Router } from "express"
 import Controllers from "../../Controllers"
 
-const { RetrieveDataByTimeRange } = Controllers.datavislation
+const { RetrieveFilteredData } = Controllers.datavislation
 
 const dataRouter = Router()
 
-dataRouter.get("/GetData", RetrieveDataByTimeRange)
+dataRouter.get("/GetData", RetrieveFilteredData)
 
 export default dataRouter
