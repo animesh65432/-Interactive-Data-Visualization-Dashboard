@@ -1,14 +1,16 @@
-import express, { Request, Response } from "express"
+import "dotenv/config"
+import express from "express"
+import cookieParser from "cookie-parser"
+import { userrouter } from "./Routers"
 
 const app = express()
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
+
+app.use("/user", userrouter)
 
 
-app.get("/", async (req: Request, res: Response) => {
-    res.status(200).json({
-        name: "hello name"
-    })
-})
-
-app.listen(3000, () => {
-    console.log(`server start at the port ${3000}`)
+app.listen(process.env.PORT || 4000, () => {
+    console.log(`server start at the port ${process.env.PORT}`)
 })

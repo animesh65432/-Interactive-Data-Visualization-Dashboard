@@ -1,0 +1,30 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                            String                       @id @default(auto()) @map("_id") @db.ObjectId
+  email                         String                       @unique
+  dataVisualizationDashboards   DataVisualizationDashboard[] @relation("UserDashboards")
+}
+
+model DataVisualizationDashboard {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String @db.ObjectId
+  user      User   @relation(fields: [userId], references: [id], name: "UserDashboards")
+  Day       String
+  Age       String
+  Gender    String
+  A         String
+  B         String
+  C         String
+  D         String
+  E         String
+  F         String
+}
