@@ -6,6 +6,6 @@ const { RetrieveFilteredData } = Controllers.datavislation
 
 const dataRouter = Router()
 
-dataRouter.get("/GetData", middleware, RetrieveFilteredData)
+dataRouter.get("/GetData", RetrieveFilteredData)
 
 export default dataRouter
