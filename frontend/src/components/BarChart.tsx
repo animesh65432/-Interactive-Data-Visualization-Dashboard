@@ -10,6 +10,7 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ data, onBarClick }) => {
+    console.log(data)
     const chartData = {
         labels: data.map((item) => item.category),
         datasets: [

@@ -1,15 +1,33 @@
-
+import React from 'react';
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, TimeScale, LinearScale, PointElement, LineElement, Tooltip, Legend } from 'chart.js';
+import {
+    Chart as ChartJS,
+    TimeScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Tooltip,
+    Legend,
+    ChartOptions
+} from 'chart.js';
 import 'chartjs-adapter-date-fns';
 
-ChartJS.register(TimeScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
+ChartJS.register(
+    TimeScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Tooltip,
+    Legend
+);
 
 interface LineChartProps {
     data: { time: string; value: number }[];
+    height?: number;
 }
 
-const LineChart: React.FC<LineChartProps> = ({ data }) => {
+const LineChart: React.FC<LineChartProps> = ({ data, height = 400 }) => {
+    console.log(data)
     const chartData = {
         labels: data.map((item) => new Date(item.time)),
         datasets: [
@@ -23,9 +41,9 @@ const LineChart: React.FC<LineChartProps> = ({ data }) => {
         ],
     };
 
-    const options = {
+    const options: ChartOptions<'line'> = {
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 display: true,
@@ -33,9 +51,12 @@ const LineChart: React.FC<LineChartProps> = ({ data }) => {
         },
         scales: {
             x: {
-                type: 'time',
+                type: 'time' as const,
                 time: {
-                    unit: 'day',
+                    unit: 'day' as const,
+                },
+                ticks: {
+                    source: 'auto' as const,
                 },
             },
             y: {
@@ -45,7 +66,7 @@ const LineChart: React.FC<LineChartProps> = ({ data }) => {
     };
 
     return (
-        <div className="w-full">
+        <div className="w-full" style={{ height: `${height}px` }}>
             <Line data={chartData} options={options} />
         </div>
     );

@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import db from "../../Db";
 import { ErrorResponse, SucessResponse } from "../../Utils"
 import data from "../../../data.json"
+import { parse, isValid } from 'date-fns';
 
 type FilterTypes = {
     startDate: string;
@@ -21,11 +22,11 @@ const parseAgeRange = (ageRange: string) => {
     return null;
 };
 
-
 const RetrieveFilteredData: RequestHandler = async (req, res) => {
     try {
         const { startDate, endDate, gender, ageRange } = req.query as FilterTypes;
 
+        console.log("Raw Start Date:", startDate, "Raw End Date:", endDate);
 
         if (!startDate || !endDate) {
             ErrorResponse(res, "Please provide a valid startDate and endDate", 400);
@@ -33,16 +34,30 @@ const RetrieveFilteredData: RequestHandler = async (req, res) => {
         }
 
 
+        const formatStartDate = parse(startDate, 'MM/dd/yyyy', new Date());
+        const formatEndDate = parse(endDate, 'MM/dd/yyyy', new Date());
+
+        console.log("Parsed Start Date:", formatStartDate, "Parsed End Date:", formatEndDate);
+        console.log("Start Date Type:", typeof formatStartDate, "End Date Type:", typeof formatEndDate);
+
+
+        if (!isValid(formatStartDate) || !isValid(formatEndDate)) {
+            ErrorResponse(res, "Invalid date format. Please use 'MM/dd/yyyy'.", 400);
+            return;
+        }
+
         const filters: any = {
             Day: {
-                gte: startDate,
-                lte: endDate,
+                gte: formatStartDate,
+                lte: formatEndDate,
             },
         };
+
 
         if (gender) {
             filters.Gender = { equals: gender };
         }
+
 
         if (ageRange) {
             const ageFilter = parseAgeRange(ageRange);
@@ -55,10 +70,12 @@ const RetrieveFilteredData: RequestHandler = async (req, res) => {
         }
 
 
+        console.log("Filters:", filters);
+
+
         const data = await db.dataVisualizationDashboard.findMany({
             where: filters,
         });
-
 
         SucessResponse(res, "Data retrieved successfully", data);
     } catch (error) {

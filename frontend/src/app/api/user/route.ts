@@ -20,8 +20,6 @@ export const POST = async (request: NextRequest) => {
             withCredentials: true
         })
 
-        console.log(response)
-
         return NextResponse.json({
             message: "sucessfully create it",
             token: response?.data?.data?.token

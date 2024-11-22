@@ -25,27 +25,32 @@ const Dashboard: React.FC = () => {
     ];
 
     const fetchLineChartData = (category: string) => {
+        // Map the data to extract the relevant time and value based on the selected category
         const filteredData = data
             .map((entry) => ({
-                time: entry.Day,
-                value: Number(entry[category as keyof typeof entry]),
+                time: entry.Day, // assuming `Day` is the key for the date in your data
+                value: Number(entry[category as keyof typeof entry]), // category is A, B, C, etc.
             }))
-            .filter((item) => !isNaN(item.value));
+            .filter((item) => !isNaN(item.value)); // Filter out invalid numbers
 
+        // Aggregate the data by time (date), summing the values for the same date
         const aggregatedData = filteredData.reduce<{ [key: string]: number }>((acc, item) => {
             if (acc[item.time] !== undefined) {
+                // If the date already exists, sum the value for that date
                 acc[item.time] += item.value;
             } else {
+                // Otherwise, initialize the date with the current value
                 acc[item.time] = item.value;
             }
             return acc;
         }, {});
 
-        const uniqueFilteredData = Object.entries(aggregatedData).map(([time, value]) => ({
-            time,
-            value,
-        }));
+        // Convert the aggregated data into an array and sort by time (chronologically)
+        const uniqueFilteredData = Object.entries(aggregatedData)
+            .map(([time, value]) => ({ time, value })) // Convert object entries to an array of objects
+            .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()); // Sort by time
 
+        // Update the line chart data state with the sorted, aggregated data
         setLineChartData(uniqueFilteredData);
     };
 
