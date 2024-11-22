@@ -18,7 +18,7 @@ export const GET = async (request: NextRequest) => {
         }
         let response
         if (gender && ageRange) {
-            response = await axios.get(`${process.env.BACKEND_URL}/data/GetData?startDate=${startDate}&endDate=${endDate}`)
+            response = await axios.get(`${process.env.BACKEND_URL}/data/GetData?startDate=${startDate}&endDate=${endDate}&gender=${gender}&ageRange=${ageRange}`)
         }
         else if (gender) {
             response = await axios.get(`${process.env.BACKEND_URL}/data/GetData?startDate=${startDate}&endDate=${endDate}&gender=${gender}`)
@@ -30,6 +30,7 @@ export const GET = async (request: NextRequest) => {
             response = await axios.get(`${process.env.BACKEND_URL}/data/GetData?startDate=${startDate}&endDate=${endDate}`)
         }
 
+        console.log(response)
         return NextResponse.json({
             message: response?.data?.message,
             data: response?.data?.data

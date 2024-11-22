@@ -14,17 +14,42 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar"; // Assuming this is a wrapper for react-day-picker
+import { useDatahook } from "../hooks";
 
 const Navbar = () => {
-    const [date, setDate] = useState({
-        from: new Date(),
-        to: new Date(),
-    });
+    const [date, setDate] = useState({ from: new Date(), to: new Date() });
+    const { fetchData } = useDatahook();
     const [ageGroup, setAgeGroup] = useState("");
     const [gender, setGender] = useState("");
 
-    useEffect(() => { }, [])
+    // This function is called when the Apply button is clicked
+    const handleclick = () => {
+        const formattedFrom = format(date.from, 'M/d/yyyy');
+        const formattedTo = format(date.to, 'M/d/yyyy');
+
+        // Conditionally pass parameters to fetchData based on age group and gender
+        if (ageGroup.length > 0 && gender.length > 0) {
+            fetchData({ startDate: formattedFrom, endDate: formattedTo, gender: gender, ageRange: ageGroup });
+        }
+        else if (ageGroup.length > 0) {
+            fetchData({ startDate: formattedFrom, endDate: formattedTo, ageRange: ageGroup });
+        }
+        else if (gender.length > 0) {
+            fetchData({ startDate: formattedFrom, endDate: formattedTo, gender });
+        }
+        else {
+            fetchData({ startDate: formattedFrom, endDate: formattedTo });
+        }
+    }
+
+    // This function updates the date values for "from" and "to"
+    const handleDateChange = (newDate: Date, type: "from" | "to") => {
+        setDate((prevState) => ({
+            ...prevState,
+            [type]: newDate,
+        }));
+    };
 
     return (
         <header className="w-full border-b bg-white">
@@ -32,9 +57,12 @@ const Navbar = () => {
                 <section className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
                     <h1 className="text-lg font-semibold">Analytics Dashboard</h1>
 
-                    <form className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto" onSubmit={(e) => e.preventDefault()}>
+                    <form
+                        className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto"
+                        onSubmit={(e) => e.preventDefault()}
+                    >
                         <fieldset className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto">
-                            <Select value={ageGroup} onValueChange={setAgeGroup} >
+                            <Select value={ageGroup} onValueChange={setAgeGroup}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Age group" />
                                 </SelectTrigger>
@@ -44,18 +72,19 @@ const Navbar = () => {
                                 </SelectContent>
                             </Select>
 
-                            <Select value={gender} onValueChange={setGender} >
+                            <Select value={gender} onValueChange={setGender}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Gender" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="male">Male</SelectItem>
-                                    <SelectItem value="female">Female</SelectItem>
+                                    <SelectItem value="Male">Male</SelectItem>
+                                    <SelectItem value="Female">Female</SelectItem>
                                 </SelectContent>
                             </Select>
 
                             <fieldset className="flex items-center gap-2 w-full sm:w-auto">
                                 <legend className="sr-only">Date Range</legend>
+
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <Button variant="outline" className="w-full sm:w-[130px]">
@@ -67,6 +96,7 @@ const Navbar = () => {
                                         <CalendarComponent
                                             mode="single"
                                             selected={date.from}
+                                            onDayClick={(newDate) => handleDateChange(newDate, "from")}
                                             initialFocus
                                         />
                                     </PopoverContent>
@@ -83,13 +113,14 @@ const Navbar = () => {
                                         <CalendarComponent
                                             mode="single"
                                             selected={date.to}
+                                            onDayClick={(newDate) => handleDateChange(newDate, "to")}
                                             initialFocus
                                         />
                                     </PopoverContent>
                                 </Popover>
                             </fieldset>
 
-                            <Button type="submit" className="w-full sm:w-[100px] mt-4 sm:mt-0">
+                            <Button type="button" className="w-full sm:w-[100px] mt-4 sm:mt-0" onClick={handleclick}>
                                 Apply
                             </Button>
                         </fieldset>

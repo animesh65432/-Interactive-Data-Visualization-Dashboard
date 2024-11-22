@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BarChartComponent, LineChart } from "./index"
-import useDatahook from "../hooks/useDatathook"
 import { useSelector } from "react-redux"
 import { RootState } from "../store"
 
@@ -8,7 +7,6 @@ const Dashboard: React.FC = () => {
     const data = useSelector((state: RootState) => state.datareducer.data)
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [lineChartData, setLineChartData] = useState<{ time: string; value: number }[]>([]);
-    const { fetchData, data: datavisualaztion } = useDatahook()
 
     const totalTimeofA = data.reduce((acc, cur) => acc + cur.A, 0)
     const totalTimeofB = data.reduce((acc, cur) => acc + cur.B, 0)
@@ -51,16 +49,7 @@ const Dashboard: React.FC = () => {
         setLineChartData(uniqueFilteredData);
     };
 
-    const fecth = async () => {
-        try {
-            await fetchData()
-        } catch (error) {
-        }
-    }
 
-    useEffect(() => {
-        fecth()
-    }, [])
 
     return (
         <main className="w-full min-h-screen p-4">
