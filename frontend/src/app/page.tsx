@@ -1,9 +1,10 @@
 "use client"
 import React from "react"
-import { Dashboard } from "../components"
+import { Dashboard, Navbar } from "../components"
 const MainPage: React.FC = () => {
 
   return <>
+    <Navbar />
     <Dashboard />
   </>
 }

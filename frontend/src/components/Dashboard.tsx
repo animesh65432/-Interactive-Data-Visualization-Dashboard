@@ -64,9 +64,6 @@ const Dashboard: React.FC = () => {
 
     return (
         <main className="w-full min-h-screen p-4">
-            <header className="mb-6">
-                <h1 className="text-2xl font-bold">Time Analysis Dashboard</h1>
-            </header>
 
             <section className="flex flex-col gap-8">
                 <article className="w-full">
