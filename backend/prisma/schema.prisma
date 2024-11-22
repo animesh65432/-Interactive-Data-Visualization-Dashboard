@@ -19,10 +19,11 @@ model DataVisualizationDashboard {
   Day       String
   Age       String
   Gender    String
-  A         String
-  B         String
-  C         String
-  D         String
-  E         String
-  F         String
+  A         Int
+  B         Int
+  C         Int
+  D         Int
+  E         Int
+  F         Int
 }
+

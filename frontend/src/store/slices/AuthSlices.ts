@@ -1,9 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit"
 
+interface AuthsliceTypes {
+    usertoken: string
+}
+
 const AuthSlices = createSlice({
-    name: "",
-    initialState: {},
+    name: "Authslice",
+    initialState: {
+        usertoken: ""
+    } as AuthsliceTypes,
     reducers: {}
 })
 
-export default AuthSlices
+export default AuthSlices.reducer

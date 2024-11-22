@@ -1,12 +1,11 @@
-"use client";
-import "./style.css";
-import { useState } from "react";
+"use client"
+import React from "react"
+import { Dashboard } from "../components"
+const MainPage: React.FC = () => {
 
-export default function Home() {
-
-  return (
-    <div>
-
-    </div>
-  );
+  return <>
+    <Dashboard />
+  </>
 }
+
+export default MainPage

@@ -37,6 +37,7 @@ export const GET = async (request: NextRequest) => {
             status: StatusCodes.OK
         })
     } catch (error) {
+        console.log(error)
         return NextResponse.json({
             message: "internal server errors"
         }, {

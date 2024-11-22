@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import db from "../../Db";
 import { ErrorResponse, SucessResponse } from "../../Utils"
+import data from "../../../data.json"
 
 type FilterTypes = {
     startDate: string;
@@ -65,6 +66,8 @@ const RetrieveFilteredData: RequestHandler = async (req, res) => {
         ErrorResponse(res, "An unexpected error occurred", 500);
     }
 };
+
+
 
 
 
