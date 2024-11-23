@@ -1,51 +1,51 @@
-import { Request, Response, NextFunction } from "express"
-import { ErrorResponse } from "./Utils"
-import jwt from "jsonwebtoken"
-import { jwtPayloadTypes } from "./types"
-import db from "./Db"
+import { Request, Response, NextFunction } from "express";
+import { ErrorResponse } from "./Utils";
+import jwt from "jsonwebtoken";
+import { jwtPayloadTypes } from "./types";
+import db from "./Db";
 
-const middleware = async (req: Request, res: Response, next: NextFunction) => {
+const middleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        console.log(req.cookies, "cookies")
-        const token = req.cookies.token;
+        const authHeader = req.headers['authorization'];
 
-        console.log(process.env.JWT_SECRET, "token")
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            ErrorResponse(res, "Unauthorized: Token missing or malformed", 401);
+            return;
+        }
 
+        const token = authHeader.split(' ')[1];
+
+        console.log("token", token)
 
         if (!token) {
-            ErrorResponse(res, "Unauthorized", 401);
-            return
+            ErrorResponse(res, "Unauthorized: Token not provided", 401);
+            return;
         }
 
-        console.log("Bye")
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as jwtPayloadTypes;
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as jwtPayloadTypes
-        const { email } = decoded
+        const { email } = decoded;
 
         if (!email) {
-            ErrorResponse(res, "Unauthorized", 401);
+            ErrorResponse(res, "Unauthorized: Invalid token payload", 401);
+            return;
+        }
+
+        const existingUser = await db.user.findUnique({
+            where: { email },
+        });
+
+        if (!existingUser) {
+            ErrorResponse(res, "Unauthorized: User does not exist", 401);
+            return;
         }
 
 
-        const exstingUser = await db.user.findUnique({
-            where: {
-                email
-            }
-        })
-
-        if (!exstingUser) {
-            ErrorResponse(res, "Unauthorized", 401);
-        }
-
-        next()
-
+        next();
     } catch (error) {
-
-        console.log(error)
-        ErrorResponse(res, "Unauthorized", 401);
+        console.error("Error in auth middleware:", error);
+        ErrorResponse(res, "Unauthorized: Token verification failed", 401);
     }
-}
+};
 
-
-
-export default middleware
+export default middleware;

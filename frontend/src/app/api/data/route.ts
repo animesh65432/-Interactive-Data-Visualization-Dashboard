@@ -8,6 +8,8 @@ export const GET = async (request: NextRequest) => {
         const endDate = searchParams.get("endDate")
         const gender = searchParams.get("gender")
         const ageRange = searchParams.get("ageRange")
+        const token = request.headers.get("token")
+        console.log("token in the next api", token)
 
         if (!startDate || !endDate) {
             return NextResponse.json({
@@ -18,16 +20,40 @@ export const GET = async (request: NextRequest) => {
         }
         let response
         if (gender && ageRange) {
-            response = await axios.get(`${process.env.BACKEND_URL}/data/GetData?startDate=${startDate}&endDate=${endDate}&gender=${gender}&ageRange=${ageRange}`)
+            response = await axios.get(`${process.env.BACKEND_URL}/data/GetData?startDate=${startDate}&endDate=${endDate}&gender=${gender}&ageRange=${ageRange}`, {
+
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+
+            })
         }
         else if (gender) {
-            response = await axios.get(`${process.env.BACKEND_URL}/data/GetData?startDate=${startDate}&endDate=${endDate}&gender=${gender}`)
+            response = await axios.get(`${process.env.BACKEND_URL}/data/GetData?startDate=${startDate}&endDate=${endDate}&gender=${gender}`, {
+
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+
+            })
         }
         else if (ageRange) {
-            response = await axios.get(`${process.env.BACKEND_URL}/data/GetData?startDate=${startDate}&endDate=${endDate}&ageRange=${ageRange}`)
+            response = await axios.get(`${process.env.BACKEND_URL}/data/GetData?startDate=${startDate}&endDate=${endDate}&ageRange=${ageRange}`, {
+
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+
+            })
         }
         else {
-            response = await axios.get(`${process.env.BACKEND_URL}/data/GetData?startDate=${startDate}&endDate=${endDate}`)
+            response = await axios.get(`${process.env.BACKEND_URL}/data/GetData?startDate=${startDate}&endDate=${endDate}`, {
+
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+
+            })
         }
 
         console.log(response)
