@@ -1,12 +1,33 @@
-"use client"
-import React from "react"
-import { Dashboard, Navbar } from "../components"
+"use client";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Dashboard, Navbar } from "../components";
+import { RootState } from "../store";
+import { useSelector } from "react-redux";
+
 const MainPage: React.FC = () => {
+  const usertoken = useSelector((state: RootState) => state.authslice.usertoken);
 
-  return <>
-    <Navbar />
-    <Dashboard />
-  </>
-}
+  console.log(usertoken, "token")
+  const isuerlogin = !!usertoken;
+  const router = useRouter();
+  console.log(isuerlogin)
 
-export default MainPage
+  useEffect(() => {
+
+    if (isuerlogin) {
+      router.push("/");
+    } else {
+      router.push("/auth/signin");
+    }
+  }, [isuerlogin, router]);
+
+  return (
+    <>
+      <Navbar />
+      <Dashboard />
+    </>
+  );
+};
+
+export default MainPage;

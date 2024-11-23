@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { usercreate } from "../../../types"
+import { usercreate } from "../../../../types"
 import axios from "axios"
 import { StatusCodes } from "http-status-codes"
 
@@ -7,7 +7,9 @@ export const POST = async (request: NextRequest) => {
     try {
         const body = await request.json() as usercreate
 
-        if (body.email === null) {
+        console.log("request body", body)
+
+        if (body.email === null || body.Name === null || body.Password === null) {
             return NextResponse.json({
                 message: "email is required",
                 sucess: false
@@ -16,9 +18,15 @@ export const POST = async (request: NextRequest) => {
             })
         }
 
-        let response = await axios.post(`${process.env.BACKEND_URL}/user/create`, { email: body.email }, {
+        let response = await axios.post(`${process.env.BACKEND_URL}/user/create`, {
+            email: body.email,
+            Name: body.Name,
+            Password: body.Password
+        }, {
             withCredentials: true
         })
+
+        console.log(response)
 
         return NextResponse.json({
             message: "sucessfully create it",
@@ -28,12 +36,12 @@ export const POST = async (request: NextRequest) => {
         })
 
 
-    } catch (error) {
+    } catch (error: any) {
 
         console.log(error, "from getting errors from creating user")
-
+        console.log(error, "from getting errors from creating user", error?.response?.data?.message)
         return NextResponse.json({
-            message: "internal server errors"
+            message: error?.response?.data?.message || "internal server errors"
         }, {
             status: StatusCodes.INTERNAL_SERVER_ERROR
         })

@@ -11,13 +11,16 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@hookform/resolvers": "^3.9.1",
     "@mui/icons-material": "^6.1.7",
     "@mui/material": "^6.1.7",
     "@mui/x-date-pickers": "^7.22.2",
     "@radix-ui/react-accordion": "^1.2.1",
+    "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-popover": "^1.1.2",
     "@radix-ui/react-select": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-toast": "^1.2.2",
     "@reduxjs/toolkit": "^2.3.0",
     "axios": "^1.7.7",
     "chart.js": "^4.4.6",
@@ -36,11 +39,13 @@
     "react-chartjs-2": "^5.2.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react-hook-form": "^7.53.2",
     "react-redux": "^9.1.2",
     "recharts": "^2.13.3",
     "rsuite": "^5.74.2",
     "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/http-status-codes": "^1.2.0",

@@ -1,5 +1,7 @@
 export type CreateUserTypes = {
-    email: string
+    email: string;
+    Password: string
+    Name: string
 }
 
 export interface SucessResponseTypes {
@@ -18,4 +20,9 @@ export interface ErrorResponseTypes {
 
 export type jwtPayloadTypes = {
     email: string
+}
+
+export type LoginTypes = {
+    email: string,
+    Password: string
 }

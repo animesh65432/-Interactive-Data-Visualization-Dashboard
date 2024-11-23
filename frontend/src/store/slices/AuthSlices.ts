@@ -13,6 +13,7 @@ const AuthSlices = createSlice({
     } as AuthsliceTypes,
     reducers: {
         addthetoken: (state, action: PayloadAction<string>) => {
+            console.log(action.payload)
             state.usertoken = action.payload;
             if (isClient) {
                 localStorage.setItem("token", action.payload);

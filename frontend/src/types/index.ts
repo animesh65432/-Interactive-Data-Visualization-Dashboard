@@ -1,5 +1,7 @@
 export type usercreate = {
-    email: string | null
+    email: string,
+    Name: string,
+    Password: string
 }
 
 export type DataTypes = {
@@ -13,4 +15,10 @@ export type DataTypes = {
     D: number
     E: number
     F: number
+}
+
+
+export type LoginTypes = {
+    email: string,
+    Password: string
 }

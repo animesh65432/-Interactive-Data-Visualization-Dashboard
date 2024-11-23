@@ -1,8 +1,8 @@
-import { CreateUser } from "./User"
+import { CreateUser, logintheuser } from "./User"
 import { RetrieveFilteredData } from "./Datavislation"
 
 const Controllers = {
-    UserControllers: { CreateUser },
+    UserControllers: { CreateUser, logintheuser },
     datavislation: { RetrieveFilteredData }
 }
 

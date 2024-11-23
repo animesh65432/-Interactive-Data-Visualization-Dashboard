@@ -1,7 +1,6 @@
 import { RequestHandler } from "express";
 import db from "../../Db";
 import { ErrorResponse, SucessResponse } from "../../Utils"
-import data from "../../../data.json"
 import { parse, isValid } from 'date-fns';
 
 type FilterTypes = {
