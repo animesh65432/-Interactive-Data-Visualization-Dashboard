@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar } from "lucide-react";
-import { format, parse } from "date-fns";
+import { format, parse, isValid } from "date-fns";
 import Cookies from 'js-cookie';
 import {
     Select,
@@ -17,45 +17,166 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { useDatahook } from "../hooks";
-import { useDispatch } from "react-redux"
-import { removetoken } from "../store/slices/AuthSlices"
-import { dateTypes } from "../types"
+import { useDispatch } from "react-redux";
+import { removetoken } from "../store/slices/AuthSlices";
+import { dateTypes } from "../types";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const Navbar = () => {
-    const [date, setDate] = useState({ from: new Date(), to: new Date() });
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const dispatch = useDispatch();
     const { fetchData } = useDatahook();
+
+    // Initialize state from URL params first, then cookies as fallback
+    const [date, setDate] = useState(() => {
+        const urlStartDate = searchParams.get('startDate');
+        const urlEndDate = searchParams.get('endDate');
+        const cookieDate = Cookies.get("date");
+
+        if (urlStartDate && urlEndDate) {
+            const startDate = parse(urlStartDate, 'M/d/yyyy', new Date());
+            const endDate = parse(urlEndDate, 'M/d/yyyy', new Date());
+            if (isValid(startDate) && isValid(endDate)) {
+                return { from: startDate, to: endDate };
+            }
+        }
+
+        if (cookieDate) {
+            try {
+                const parsedDate = JSON.parse(cookieDate);
+                const startDate = parse(parsedDate.from, 'M/d/yyyy', new Date());
+                const endDate = parse(parsedDate.to, 'M/d/yyyy', new Date());
+                if (isValid(startDate) && isValid(endDate)) {
+                    return { from: startDate, to: endDate };
+                }
+            } catch (e) {
+                console.error('Error parsing date cookie:', e);
+            }
+        }
+
+        return { from: new Date(), to: new Date() };
+    });
+
     const [ageGroup, setAgeGroup] = useState(() => {
-        const savedAgeGroup = Cookies.get("ageGroup");
-        return savedAgeGroup || "";
+        return searchParams.get('ageRange') || Cookies.get("ageGroup") || "";
     });
+
     const [gender, setGender] = useState(() => {
-        const savedGender = Cookies.get("gender");
-        return savedGender || ""
+        return searchParams.get('gender') || Cookies.get("gender") || "";
     });
-    const dispatch = useDispatch()
+
+    // Initial data fetch from cookies
+    useEffect(() => {
+        const cookieDate = Cookies.get("date");
+        const cookieAgeGroup = Cookies.get("ageGroup");
+        const cookieGender = Cookies.get("gender");
+
+        if (cookieDate) {
+            try {
+                const parsedDate = JSON.parse(cookieDate);
+                const params: any = {
+                    startDate: parsedDate.from,
+                    endDate: parsedDate.to
+                };
+
+                if (cookieAgeGroup) {
+                    params.ageRange = cookieAgeGroup;
+                }
+                if (cookieGender) {
+                    params.gender = cookieGender;
+                }
+
+                // Initial fetch using cookie values
+                fetchData(params);
+
+                // Update URL to match cookie values
+                const urlParams = new URLSearchParams();
+                urlParams.set('startDate', parsedDate.from);
+                urlParams.set('endDate', parsedDate.to);
+                if (cookieAgeGroup) urlParams.set('ageRange', cookieAgeGroup);
+                if (cookieGender) urlParams.set('gender', cookieGender);
+                router.push(`/?${urlParams.toString()}`);
+            } catch (e) {
+                console.error('Error loading initial cookie data:', e);
+            }
+        }
+    }, []);
+
+    // Handle URL parameter changes
+    useEffect(() => {
+        const urlStartDate = searchParams.get('startDate');
+        const urlEndDate = searchParams.get('endDate');
+        const urlAgeRange = searchParams.get('ageRange');
+        const urlGender = searchParams.get('gender');
+
+        if (!urlStartDate || !urlEndDate) return;
+
+        const params: any = {
+            startDate: urlStartDate,
+            endDate: urlEndDate
+        };
+
+        if (urlAgeRange) {
+            params.ageRange = urlAgeRange;
+            setAgeGroup(urlAgeRange);
+        }
+
+        if (urlGender) {
+            params.gender = urlGender;
+            setGender(urlGender);
+        }
+
+        try {
+            const startDate = parse(urlStartDate, 'M/d/yyyy', new Date());
+            const endDate = parse(urlEndDate, 'M/d/yyyy', new Date());
+
+            if (isValid(startDate) && isValid(endDate)) {
+                setDate({ from: startDate, to: endDate });
+                fetchData(params);
+            }
+        } catch (e) {
+            console.error('Error parsing URL dates:', e);
+        }
+    }, [searchParams]);
 
     const handleclick = () => {
         const formattedFrom = format(date.from, 'M/d/yyyy');
         const formattedTo = format(date.to, 'M/d/yyyy');
 
+        // Update cookies with expiration
         Cookies.set("date", JSON.stringify({ from: formattedFrom, to: formattedTo }), { expires: 7 });
-        Cookies.set("ageGroup", ageGroup, { expires: 7 });
-        Cookies.set("gender", gender, { expires: 7 });
+        if (ageGroup) {
+            Cookies.set("ageGroup", ageGroup, { expires: 7 });
+        } else {
+            Cookies.remove("ageGroup");
+        }
+        if (gender) {
+            Cookies.set("gender", gender, { expires: 7 });
+        } else {
+            Cookies.remove("gender");
+        }
 
+        // Prepare URL parameters
+        const params = new URLSearchParams();
+        params.set('startDate', formattedFrom);
+        params.set('endDate', formattedTo);
+        if (ageGroup) params.set('ageRange', ageGroup);
+        if (gender) params.set('gender', gender);
 
-        if (ageGroup.length > 0 && gender.length > 0) {
-            fetchData({ startDate: formattedFrom, endDate: formattedTo, gender: gender, ageRange: ageGroup });
-        }
-        else if (ageGroup.length > 0) {
-            fetchData({ startDate: formattedFrom, endDate: formattedTo, ageRange: ageGroup });
-        }
-        else if (gender.length > 0) {
-            fetchData({ startDate: formattedFrom, endDate: formattedTo, gender });
-        }
-        else {
-            fetchData({ startDate: formattedFrom, endDate: formattedTo });
-        }
-    }
+        // Prepare API parameters
+        const apiParams: any = {
+            startDate: formattedFrom,
+            endDate: formattedTo
+        };
+        if (ageGroup) apiParams.ageRange = ageGroup;
+        if (gender) apiParams.gender = gender;
+
+        // Fetch data and update URL
+        fetchData(apiParams);
+        router.push(`/?${params.toString()}`);
+    };
 
     const handleDateChange = (newDate: Date, type: "from" | "to") => {
         setDate((prevState) => ({
@@ -65,55 +186,13 @@ const Navbar = () => {
     };
 
     const onlogout = () => {
-        dispatch(removetoken())
-    }
-
-    useEffect(() => {
-
-        const savedAgeGroup = Cookies.get("ageGroup");
-        const savedGender = Cookies.get("gender");
-        const date = Cookies.get("date")
-
-        if (!date) {
-            return
-        }
-
-        const convertthejson = JSON.parse(date) as dateTypes
-
-        const formattedFrom = convertthejson.from
-        const formattedTo = convertthejson.to
-
-
-
-
-
-        if (savedAgeGroup) setAgeGroup(savedAgeGroup);
-        if (savedGender && savedGender.length > 0) {
-        }
-        if (convertthejson.from && convertthejson.to) {
-            setDate({
-                from: parse(convertthejson.from, "M/d/yyyy", new Date()),
-                to: parse(convertthejson.to, "M/d/yyyy", new Date()),
-            });
-        }
-
-
-        if (savedAgeGroup && savedAgeGroup.length > 0 && savedGender && savedGender.length > 0) {
-            fetchData({ startDate: formattedFrom, endDate: formattedTo, gender: savedGender, ageRange: savedAgeGroup });
-        }
-        else if (savedAgeGroup && savedAgeGroup.length > 0) {
-            fetchData({ startDate: formattedFrom, endDate: formattedTo, ageRange: ageGroup });
-        }
-        else if (savedGender && savedGender.length > 0) {
-            fetchData({ startDate: formattedFrom, endDate: formattedTo, gender: savedGender });
-        }
-        else {
-            fetchData({ startDate: formattedFrom, endDate: formattedTo });
-        }
-
-    }, []);
-
-
+        // Clear all cookies on logout
+        Cookies.remove("date");
+        Cookies.remove("ageGroup");
+        Cookies.remove("gender");
+        Cookies.remove("token");
+        dispatch(removetoken());
+    };
 
     return (
         <header className="w-full border-b bg-white">
