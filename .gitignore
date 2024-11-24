@@ -2,5 +2,4 @@ data.json
 node_modules/
 .git
 .env
-dist
 .next
