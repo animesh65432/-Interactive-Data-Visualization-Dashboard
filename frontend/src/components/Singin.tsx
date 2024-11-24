@@ -43,7 +43,7 @@ const Signin: React.FC = () => {
                     title: errormessage
                 })
             }
-        } catch (error) {
+        } catch {
             toast({
                 title: errormessage
             })

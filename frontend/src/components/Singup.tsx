@@ -9,7 +9,6 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { SignupSchema } from "../schema"
 import { useCreateUser } from "../hooks"
 import { useToast } from "@/hooks/use-toast"
-import { useRouter } from "next/navigation"
 
 type SignupFormData = z.infer<typeof SignupSchema>;
 
@@ -23,7 +22,7 @@ const Signup: React.FC = () => {
     });
     const { createUser, flg, errorMessage } = useCreateUser()
     const { toast } = useToast()
-    const router = useRouter()
+
 
     const onSubmit = async (data: SignupFormData) => {
         try {
@@ -41,8 +40,10 @@ const Signup: React.FC = () => {
                     title: errorMessage
                 })
             }
-        } catch (error) {
-
+        } catch {
+            toast({
+                title: errorMessage
+            })
         }
 
     };

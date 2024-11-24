@@ -1,6 +1,6 @@
-
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip } from 'chart.js';
+import { ChartEvent, ActiveElement } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip);
 
@@ -10,7 +10,8 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ data, onBarClick }) => {
-    console.log(data)
+    console.log(data);
+
     const chartData = {
         labels: data.map((item) => item.category),
         datasets: [
@@ -27,10 +28,12 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick }) => {
     const options = {
         responsive: true,
         maintainAspectRatio: true,
-        onClick: (event: any, elements: any[]) => {
+        onClick: (event: ChartEvent, elements: ActiveElement[]) => {
             if (elements.length > 0) {
                 const index = elements[0].index;
-                onBarClick(data[index].category);
+                if (index !== undefined) {
+                    onBarClick(data[index].category);
+                }
             }
         },
         plugins: {

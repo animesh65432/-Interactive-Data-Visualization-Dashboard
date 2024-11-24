@@ -18,7 +18,7 @@ export const POST = async (request: NextRequest) => {
             })
         }
 
-        let response = await axios.post(`${process.env.BACKEND_URL}/user/create`, {
+        const response = await axios.post(`${process.env.BACKEND_URL}/user/create`, {
             email: body.email,
             Name: body.Name,
             Password: body.Password
