@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar } from "lucide-react";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
+import Cookies from 'js-cookie';
 import {
     Select,
     SelectContent,
@@ -14,21 +15,34 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar"; // Assuming this is a wrapper for react-day-picker
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { useDatahook } from "../hooks";
+import { useDispatch } from "react-redux"
+import { removetoken } from "../store/slices/AuthSlices"
+import { dateTypes } from "../types"
 
 const Navbar = () => {
     const [date, setDate] = useState({ from: new Date(), to: new Date() });
     const { fetchData } = useDatahook();
-    const [ageGroup, setAgeGroup] = useState("");
-    const [gender, setGender] = useState("");
+    const [ageGroup, setAgeGroup] = useState(() => {
+        const savedAgeGroup = Cookies.get("ageGroup");
+        return savedAgeGroup || "";
+    });
+    const [gender, setGender] = useState(() => {
+        const savedGender = Cookies.get("gender");
+        return savedGender || ""
+    });
+    const dispatch = useDispatch()
 
-    // This function is called when the Apply button is clicked
     const handleclick = () => {
         const formattedFrom = format(date.from, 'M/d/yyyy');
         const formattedTo = format(date.to, 'M/d/yyyy');
 
-        // Conditionally pass parameters to fetchData based on age group and gender
+        Cookies.set("date", JSON.stringify({ from: formattedFrom, to: formattedTo }), { expires: 7 });
+        Cookies.set("ageGroup", ageGroup, { expires: 7 });
+        Cookies.set("gender", gender, { expires: 7 });
+
+
         if (ageGroup.length > 0 && gender.length > 0) {
             fetchData({ startDate: formattedFrom, endDate: formattedTo, gender: gender, ageRange: ageGroup });
         }
@@ -43,13 +57,63 @@ const Navbar = () => {
         }
     }
 
-    // This function updates the date values for "from" and "to"
     const handleDateChange = (newDate: Date, type: "from" | "to") => {
         setDate((prevState) => ({
             ...prevState,
             [type]: newDate,
         }));
     };
+
+    const onlogout = () => {
+        dispatch(removetoken())
+    }
+
+    useEffect(() => {
+
+        const savedAgeGroup = Cookies.get("ageGroup");
+        const savedGender = Cookies.get("gender");
+        const date = Cookies.get("date")
+
+        if (!date) {
+            return
+        }
+
+        const convertthejson = JSON.parse(date) as dateTypes
+
+        const formattedFrom = convertthejson.from
+        const formattedTo = convertthejson.to
+
+
+
+
+
+        if (savedAgeGroup) setAgeGroup(savedAgeGroup);
+        if (savedGender && savedGender.length > 0) {
+        }
+        if (convertthejson.from && convertthejson.to) {
+            setDate({
+                from: parse(convertthejson.from, "M/d/yyyy", new Date()),
+                to: parse(convertthejson.to, "M/d/yyyy", new Date()),
+            });
+        }
+
+
+        if (savedAgeGroup && savedAgeGroup.length > 0 && savedGender && savedGender.length > 0) {
+            fetchData({ startDate: formattedFrom, endDate: formattedTo, gender: savedGender, ageRange: savedAgeGroup });
+        }
+        else if (savedAgeGroup && savedAgeGroup.length > 0) {
+            fetchData({ startDate: formattedFrom, endDate: formattedTo, ageRange: ageGroup });
+        }
+        else if (savedGender && savedGender.length > 0) {
+            fetchData({ startDate: formattedFrom, endDate: formattedTo, gender: savedGender });
+        }
+        else {
+            fetchData({ startDate: formattedFrom, endDate: formattedTo });
+        }
+
+    }, []);
+
+
 
     return (
         <header className="w-full border-b bg-white">
@@ -122,6 +186,10 @@ const Navbar = () => {
 
                             <Button type="button" className="w-full sm:w-[100px] mt-4 sm:mt-0" onClick={handleclick}>
                                 Apply
+                            </Button>
+
+                            <Button type="button" className="w-full sm:w-[100px] mt-4 sm:mt-0" onClick={onlogout}>
+                                Logout
                             </Button>
                         </fieldset>
                     </form>

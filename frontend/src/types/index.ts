@@ -22,3 +22,8 @@ export type LoginTypes = {
     email: string,
     Password: string
 }
+
+export type dateTypes = {
+    from: string,
+    to: string
+}
