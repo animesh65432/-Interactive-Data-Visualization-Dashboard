@@ -16,10 +16,12 @@ const useLoginhook = () => {
             const response = await axios.post("/api/user/login", data)
             setflg(false)
             dispatch(addthetoken(response?.data?.token))
-        } catch (error: any) {
+        } catch (error: unknown) {
             setflg(true)
             console.log(error)
-            setErrorMessage(error?.response?.data?.message)
+            if (axios.isAxiosError(error)) {
+                setErrorMessage(error?.response?.data?.message)
+            }
         }
         finally {
             setloading(false)

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { usercreate } from "../../../../types"
-import axios, { AxiosError } from "axios"
+import axios from "axios"
 import { StatusCodes } from "http-status-codes"
 
 export const POST = async (request: NextRequest) => {

@@ -23,7 +23,8 @@ type ChartContextProps = {
 
 const ChartContext = React.createContext<ChartContextProps | null>(null);
 
-function useChart() {
+// Exported hook for future use
+export function useChart() {
   const context = React.useContext(ChartContext);
 
   if (!context) {
@@ -68,7 +69,7 @@ ChartContainer.displayName = "Chart";
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
-    ([_, config]) => config.theme || config.color
+    ([, config]) => config.theme || config.color
   );
 
   if (!colorConfig.length) {
@@ -96,3 +97,5 @@ ${colorConfig
     />
   );
 };
+
+export default ChartContainer;
