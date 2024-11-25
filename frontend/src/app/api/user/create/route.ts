@@ -18,7 +18,7 @@ export const POST = async (request: NextRequest) => {
             })
         }
 
-        const response = await axios.post(`${process.env.BACKEND_URL}/user/create`, {
+        const response = await axios.post(`https://interactive-data-visualization-backend.onrender.com/user/create`, {
             email: body.email,
             Name: body.Name,
             Password: body.Password

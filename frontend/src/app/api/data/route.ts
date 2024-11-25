@@ -20,7 +20,7 @@ export const GET = async (request: NextRequest) => {
         }
         let response
         if (gender && ageRange) {
-            response = await axios.get(`${process.env.BACKEND_URL}/data/GetData?startDate=${startDate}&endDate=${endDate}&gender=${gender}&ageRange=${ageRange}`, {
+            response = await axios.get(`https://interactive-data-visualization-backend.onrender.com/data/GetData?startDate=${startDate}&endDate=${endDate}&gender=${gender}&ageRange=${ageRange}`, {
 
                 headers: {
                     "Authorization": `Bearer ${token}`,

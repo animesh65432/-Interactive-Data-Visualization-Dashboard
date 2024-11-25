@@ -16,7 +16,7 @@ export const POST = async (req: NextRequest) => {
             })
         }
 
-        const response = await axios.post(`${process.env.BACKEND_URL}/user/login`, {
+        const response = await axios.post(`https://interactive-data-visualization-backend.onrender.com/user/login`, {
             email: body.email,
             Password: body.Password
         }, {
