@@ -8,6 +8,9 @@
           "zeroConfig": true
         }
       }
+    ],
+    "rewrites": [
+      { "source": "/(.*)", "destination": "/" }
     ]
   }
   
