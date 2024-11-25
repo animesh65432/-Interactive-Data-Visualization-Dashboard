@@ -3,6 +3,7 @@ import express from "express"
 import cookieParser from "cookie-parser"
 import { userrouter, dataRouter } from "./Routers"
 import cors from "cors"
+import serverless from "serverless-http"
 
 const app = express()
 app.use(cors({
@@ -18,6 +19,5 @@ app.use("/user", userrouter)
 app.use("/data", dataRouter)
 
 
-app.listen(process.env.PORT || 4000, () => {
-    console.log(`server start at the port ${process.env.PORT}`)
-})
+
+export const handler = serverless(app)
