@@ -21,6 +21,7 @@ import { useDispatch } from "react-redux";
 import { removetoken } from "../store/slices/AuthSlices";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+import { paramstypes } from "../types"
 
 const Navbar = () => {
     const searchParams = useSearchParams();
@@ -75,7 +76,7 @@ const Navbar = () => {
         if (cookieDate) {
             try {
                 const parsedDate = JSON.parse(cookieDate);
-                const params: any = {
+                const params: paramstypes = {
                     startDate: parsedDate.from,
                     endDate: parsedDate.to
                 };
@@ -112,7 +113,7 @@ const Navbar = () => {
 
         if (!urlStartDate || !urlEndDate) return;
 
-        const params: any = {
+        const params: paramstypes = {
             startDate: urlStartDate,
             endDate: urlEndDate
         };
@@ -165,7 +166,7 @@ const Navbar = () => {
         if (gender) params.set('gender', gender);
 
         // Prepare API parameters
-        const apiParams: any = {
+        const apiParams: paramstypes = {
             startDate: formattedFrom,
             endDate: formattedTo
         };

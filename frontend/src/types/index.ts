@@ -27,3 +27,10 @@ export type dateTypes = {
     from: string,
     to: string
 }
+
+export type paramstypes = {
+    startDate: string,
+    endDate: string,
+    ageRange?: string
+    gender?: string
+}

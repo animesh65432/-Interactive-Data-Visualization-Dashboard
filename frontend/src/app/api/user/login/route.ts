@@ -44,13 +44,26 @@ export const POST = async (req: NextRequest) => {
         return res;
 
 
-    } catch (error: any) {
-        console.log(error, "from getting errors from creating user", error?.response?.data?.message)
+    } catch (error: unknown) {
 
-        return NextResponse.json({
-            message: error?.response?.data?.message || "internal server errors"
-        }, {
-            status: 500
-        })
+        if (axios.isAxiosError(error)) {
+            console.log(error, "from getting errors from creating user", error?.response?.data?.message)
+
+            return NextResponse.json({
+                message: error?.response?.data?.message || "internal server errors"
+            }, {
+                status: 500
+            })
+        }
+
+        console.error("Unexpected error:", error);
+        return NextResponse.json(
+            {
+                message: "An unexpected error occurred",
+            },
+            {
+                status: 500,
+            }
+        );
     }
 }

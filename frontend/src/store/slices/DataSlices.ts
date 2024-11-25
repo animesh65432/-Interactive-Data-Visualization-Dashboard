@@ -12,10 +12,9 @@ const DataSlice = createSlice({
     } as DataintialState,
     reducers: {
         addthedata: (state, action) => {
-            console.log(action.payload, "it's payload data")
             state.data = action.payload
         },
-        removedata: (state, action) => {
+        removedata: (state) => {
             state.data = []
         }
     }

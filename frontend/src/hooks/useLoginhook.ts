@@ -13,9 +13,8 @@ const useLoginhook = () => {
     const loginfunc = async (data: LoginTypes) => {
         setloading(true)
         try {
-            let response = await axios.post("/api/user/login", data)
+            const response = await axios.post("/api/user/login", data)
             setflg(false)
-            console.log(response)
             dispatch(addthetoken(response?.data?.token))
         } catch (error: any) {
             setflg(true)

@@ -13,10 +13,12 @@ const useUserCreateHook = () => {
             const response = await axios.post("/api/user/create", data);
             console.log(response);
             setflg(false)
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
             setflg(true)
-            setErrorMessage(error?.response?.data?.message)
+            if (axios.isAxiosError(error)) {
+                setErrorMessage(error?.response?.data?.message)
+            }
         } finally {
             setLoading(false);
         }

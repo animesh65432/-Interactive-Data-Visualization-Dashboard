@@ -3,9 +3,10 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { addthedata } from "../store/slices/DataSlices"
 import { RootState } from "../store"
+import { DataTypes } from "../types"
 
 const useDatahook = () => {
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<DataTypes[]>([]);
     const token = useSelector((state: RootState) => state.authslice.usertoken)
     const dispatch = useDispatch()
     const fetchData = async ({ startDate, endDate, gender, ageRange }: { startDate: string, endDate: string, gender?: string, ageRange?: string }) => {
