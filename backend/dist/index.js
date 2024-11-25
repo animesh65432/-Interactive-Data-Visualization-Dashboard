@@ -10,7 +10,7 @@ const Routers_1 = require("./Routers");
 const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND_URL,
     credentials: true
 }));
 app.use(express_1.default.json());
