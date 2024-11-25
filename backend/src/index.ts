@@ -3,7 +3,6 @@ import express from "express"
 import cookieParser from "cookie-parser"
 import { userrouter, dataRouter } from "./Routers"
 import cors from "cors"
-import serverless from "serverless-http"
 
 const app = express()
 app.use(cors({
@@ -18,6 +17,13 @@ app.use(cookieParser())
 app.use("/user", userrouter)
 app.use("/data", dataRouter)
 
+app.get("/", async (req, res) => {
+    res.status(200).json({
+        message: "just started"
+    })
+})
 
 
-export const handler = serverless(app)
+app.listen(process.env.PORT || 4000, () => {
+    console.log(`server start at the port ${process.env.PORT}`)
+})
